@@ -1,0 +1,279 @@
+# ==============================================================================
+# JAX Platformer Environment Configuration
+# ==============================================================================
+# This configuration file allows precise control over all environment aspects.
+# Edit this file to customize backgrounds, characters, NPCs, physics, and usage.
+#
+# Load this config using:
+#   from kage_bench import EnvConfig, load_config_from_yaml
+#   config = load_config_from_yaml("custom_config.yaml")
+#   env = KAGE_Env(config)
+# ==============================================================================
+
+
+# ------------------------------------------------------------------------------
+# 0. Episode Settings
+# ------------------------------------------------------------------------------
+episode_length: 500        # Default: 500 | Max steps per episode
+forward_reward_scale: 0.2  # Default: 0.2 | Reward for moving forward
+jump_penalty: 10.0         # Default: 10.0 | Penalty for jumping
+timestep_penalty: 0.1      # Default: 0.1 | Per-timestep reward penalty
+idle_penalty: 5.0          # Default: 5.0 | Penalty when x does not change
+
+
+# ------------------------------------------------------------------------------
+# 1. Global Screen Settings
+# ------------------------------------------------------------------------------
+H: 128  # Default: 128 | Screen height in pixels
+W: 128  # Default: 128 | Screen width in pixels
+
+
+# ------------------------------------------------------------------------------
+# 2. Background Settings
+# ------------------------------------------------------------------------------
+background:
+  # * Mode (Default: "black"):
+    # "black" - just black background
+    # "image" - image backgrounds
+    # "noise" - white noise background (unique for each episode)
+    # "color" - color backgrounds
+  mode: "black"
+  
+  # * Image mode settings (ignired if mode != "image"):
+  # * Please, choose only one of the following options image_dir, image_paths, image_path:
+  # [Option 1] Specify a directory to load all images from (randomly selected per episode)
+  image_dir: "src/kage_bench/assets/backgrounds" # * Will use all the 128 images
+
+  # [Option 2] Or specify list of explicit paths:
+  # image_paths: # * Will use only listed images
+  #   - "src/kage_bench/assets/backgrounds/bg-1.jpeg"
+  #   - "src/kage_bench/assets/backgrounds/bg-64.jpeg"
+  #   - "src/kage_bench/assets/backgrounds/bg-128.jpeg"
+  
+  # [Option 3] Or force a single image:
+  # image_path: "path/to/your/image.jpeg"
+  
+  # Parallax/Tiling (ignored if mode != "image")
+  parallax_factor: 0.5   # Default: 0.5 | 0.0 = static, 0.5 = slow scroll, 1.0 = locked to camera, <0 = moves left, >1 = moves fast
+  tile_horizontal: true  # Default: true | Repeat image horizontally for infinite worlds
+  
+  # Dynamic switching (change background during the episode \ gif effect)
+  switch_frequency: 0.0  # Default: 0.0 | Probability per step (0.0 = never switch, 1.0 = every step)
+  
+  # * Color mode settings (ignored if mode != "color"):
+  # List of colors to randomly select from per episode
+  # Available colors: 
+    # "black", "white", "red", "orange", "yellow", "green", "cyan", "blue", 
+    # "purple", "pink", "brown", "gray", "lime", "teal", "indigo", "magenta"
+  color_names: ["purple", "teal", "indigo"]
+
+
+# ------------------------------------------------------------------------------
+# 3. Character Settings (Player)
+# ------------------------------------------------------------------------------
+character:
+  width: 16  # Default: 16 | Character width in pixels  | Recommended to not change
+  height: 24 # Default: 24 | Character height in pixels | Recommented to not change
+  
+  # * Sprite Settings (ignored if use_shape: true):
+  use_sprites: false # Default: true | Use sprites for character
+  # * Please, choose only one of the following options sprite_dir, sprite_paths, sprite_path:
+  # [Option 1] Directory containing sprite subdirectories (auto-discovers all subdirs as skins):
+  sprite_dir: "src/kage_bench/assets/sprites"  # Will auto-discover and use all subdirectories like clown/, robot/, skelet/, etc.
+
+  # [Option 2] List of directories for multiple skins (randomly selected per episode):
+  # NOTE: Each directory should contain .png animation frames (e.g., walk-1.png, walk-2.png)
+  # sprite_paths:
+    # - "src/kage_bench/assets/sprites/clown"         # Skin 1
+    # - "src/kage_bench/assets/sprites/dark_knight"   # Skin 2
+    # - "src/kage_bench/assets/sprites/skeleton"        # Skin 3
+
+  # [Option 3] Single sprite directory:
+  # sprite_path: "path/to/your/folder/with/sprite"
+
+  # Animation settings (ignored if use_sprites: false):
+  enable_animation: true  # Default: true | Enable sprite animation (if false, use only first frame)
+  animation_fps: 12.0     # Default: 12.0 | Frames per second for sprite animation
+  idle_sprite_idx: 0      # Default: 0 | Which sprite to use when idle (typically first)
+  
+  
+  # * Shape Settings (ignored if use_sprites: true):
+  use_shape: true # Default: false | Use shapes for character
+
+  # Available shapes:
+    # "circle", "cross", "diamond", "ellipse", "line", 
+    # "polygon", "square", "star", "triangle"
+  shape_types: ["circle"]
+
+  # Available colors:
+    # "red", "green", "blue", "orange", "yellow", "violet", "magenta", 
+    #"cyan", "pink", "brown", "purple", "lime", "navy", "maroon", 
+    # "olive", "teal", "indigo", "coral", "gold", "silver", "white"
+  shape_colors: ["teal"]
+  shape_rotate: false        # Default: true | Enable shape rotation
+  shape_rotation_speed: 5.0 # Default: 5.0 | Rotation speed in degrees per second
+
+
+# ------------------------------------------------------------------------------
+# 4. NPC Settings (Non-Player Characters)
+# ------------------------------------------------------------------------------
+npc:
+  # Default: true | Enable NPC system:
+  # * World-Fixed NPCs (stand on platforms)
+  enabled: false       # Default: true | Enable World-Fixed NPC system:
+  min_npc_count: 5    # Default: 5 | Minimum number of NPCs per level
+  max_npc_count: 20   # Default: 20 | Maximum number of NPCs per level
+  spawn_y_offset: 0   # Default: 0 | Offset from ground in pixels (positive = up, negative = down)
+  animation_fps: 12.0 # Default: 12.0 | Animation speed for NPCs
+  
+  # * Please, choose only one of the following options sprite_dir, sprite_paths, sprite_path:
+  # [Option 1] Specify a directory to auto-discover all sprite subdirectories:
+  sprite_dir: "src/kage_bench/assets/sprites"  # Will auto-discover all subdirs like robot/, girl/, skelet/, etc.
+
+  # [Option 2] Or specify list of explicit paths:
+  # sprite_paths:
+  #   - "src/kage_bench/assets/sprites/clown"         # Skin 1
+  #   - "src/kage_bench/assets/sprites/dark_knight"   # Skin 2
+  #   - "src/kage_bench/assets/sprites/skeleton"        # Skin 3
+
+  # [Option 3] Or force a single sprite directory:
+  # sprite_path: "path/to/your/folder/with/sprite"
+    
+  
+  # * Sticky NPCs (follow camera and always visible in observation):
+  sticky_enabled: false  # Default: false | Enable sticky NPC system:
+  min_sticky_count: 1    # Default: 1 | Minimum number of sticky NPCs per level
+  max_sticky_count: 5    # Default: 5 | Maximum number of sticky NPCs per level
+  # * Please, choose only one of the following options sticky_sprite_dir, sticky_sprite_dirs, sticky_sprite_path:
+  # [Option 1] Specify a directory to auto-discover all sticky sprite subdirectories:
+  sticky_sprite_dir: "src/kage_bench/assets/sprites"  # Will auto-discover all subdirs
+
+  # [Option 2] Or specify list of explicit paths (backward compatibility):
+  # sticky_sprite_dirs: # * Will use only listed sprite directories
+  #   - "src/kage_bench/assets/sprites/clown"         # Skin 1
+  #   - "src/kage_bench/assets/sprites/dark_knight"   # Skin 2
+  #   - "src/kage_bench/assets/sprites/skeleton"        # Skin 3
+
+  # [Option 3] Or force a single sticky sprite directory:
+  # sticky_sprite_path: "path/to/your/folder/with/sprite"
+
+  # Sticky NPCs settings:
+  sticky_can_jump: true          # Default: true | Enable jumping for sticky NPCs
+  sticky_jump_probability: 0.01  # Default: 0.01 | Probability of jumping per step
+  sticky_y_min_offset: -40       # Default: -40  | Minimum Y offset from ground (negative = higher)
+  sticky_y_max_offset: -10       # Default: -10  | Maximum Y offset from ground (0 = on ground)
+  sticky_x_offsets: []           # Default: []   | Camera-relative X offsets for sticky NPCs (e.g., [-40, 0, 40]). If not provided, NPCs will be spread around agent
+  sticky_x_min: -60              # Default: -60  | Minimum X offset from center
+  sticky_x_max: 60               # Default: 60   | Maximum X offset from center
+
+
+# ------------------------------------------------------------------------------
+# 5. Distractors Settings
+# ------------------------------------------------------------------------------
+distractors:
+  # Whether to enable distractors, i.e. moving geometric shapes on background (always visible in observation)
+  enabled: true # Default: false | Enable distractors system:
+  count: 7      # Default: 5 | Number of distractors per level
+  
+  # Available shapes:
+    # "circle", "cross", "diamond", "ellipse", 
+    # "line", "polygon", "square", "star", "triangle"
+  shape_types: ["circle"]
+
+  # Available colors:
+    # "red", "green", "blue", "orange", "yellow", "violet", "magenta", 
+    # "cyan", "pink", "brown",  "purple", "lime", "navy", "maroon", 
+    # "olive", "teal", "indigo", "coral", "gold", "silver", "white"
+  shape_colors: ["teal"]
+  
+  # Dynamics:
+  can_move: true           # Default: true | Whether distractors move around
+  min_speed: 0.0           # Default: 0.0 | Minimum movement speed (pixels per step)
+  max_speed: 1.0           # Default: 2.0 | Maximum movement speed (pixels per step)
+  can_rotate: true         # Default: true | Whether distractors rotate
+  min_rotation_speed: -0.3 # Default: -3.0 | Minimum rotation speed (degrees per step)
+  max_rotation_speed: 0.3  # Default: 3.0 | Maximum rotation speed (degrees per step)
+  min_size: 16              # Default: 4 | Minimum size
+  max_size: 16             # Default: 12 | Maximum size
+
+
+# ------------------------------------------------------------------------------
+# 6. Filter & Effect Settings
+# ------------------------------------------------------------------------------
+filters:
+  brightness: 0.0        # Default: 0.0 | [-1, 1] additive exposure, scaled in code
+  contrast: 1.0          # Default: 1.0 | >0, scales around mid-gray (128)
+  gamma: 1.0             # Default: 1.0 | [0.5, 2.0] power-law on [0,1]
+  saturation: 1.0        # Default: 1.0 | [0, 2] HSV S multiplier
+  hue_shift: 0.0         # Default: 0.0 | [-180, 180] degrees, HSV hue offset
+  color_temp: 0.0        # Default: 0.0 | [-1, 1] warm(+R,-B) vs cool(+B,-R)
+
+  # Stochastic effects (require PRNG key):
+  color_jitter_std: 0.0    # Default: 0.0 | >=0, std of 3x3 RGB mixing perturbation
+  gaussian_noise_std: 0.0  # Default: 0.0 | >=0, pixelwise N(0, std^2) in [0,255]
+  poisson_noise_scale: 0.0 # Default: 0.0 | [0,1], shot noise with lambda = img*scale
+  
+  # Spatial / detail transforms:
+  blur_sigma: 0.0        # Default: 0.0 | >=0, box-blur approximation strength
+  sharpen_amount: 0.0    # Default: 0.0 | >=0, unsharp mask gain
+  pixelate_factor: 1     # Default: 1 | int>=1, down/up nearest (1 disables)
+
+  # Global shading / lighting overlays:
+  vignette_strength: 0.0     # Default: 0.0 | >=0, edge darkening factor (code expects ~[0,1])
+  radial_light_strength: 0.0 # Default: 0.0 | >=0, additive center light (code expects ~[0,1])
+  
+  # Optional preset stack:
+  pop_filter_list: []    # Default: [] | ["vintage","retro","cyberpunk","horror","noir"]
+
+
+# ------------------------------------------------------------------------------
+# 7. Effects Settings
+# ------------------------------------------------------------------------------
+effects:
+  # Point light effect
+  point_light_enabled: false  # Default: false | Enable/disable point light effects
+  point_light_intensity: 1.0  # Default: 1.0 | Light intensity in [0.1, 5.0]
+  point_light_radius: 0.1     # Default: 0.1 | Light radius as fraction of image size [0.01, 1.0]
+  point_light_falloff: 2      # Default: 2.0 | Falloff exponent in [1.0, 4.0], higher = sharper
+
+  # Multiple random lights
+  point_light_count: 4        # Default: 1 | Number of lights in [1, 5]
+
+  # Available colors:
+    # `warm_white`, `cool_white`, `yellow`, `orange`, `red`, 
+    # `green`, `cyan`, `blue`, `purple`, `pink`, `gold`, `fire`
+  point_light_color_names: ["blue", "pink", "gold"]   # Default: ["warm_white"] | List of color names from LIGHT_COLORS
+
+
+# ------------------------------------------------------------------------------
+# 8. Level Layout
+# ------------------------------------------------------------------------------
+layout:
+  length: 2048            # Default: 2048 | Length of the level in pixels
+  height_px: 128          # Default: 128 | Height of the level in pixels
+  base_ground_y: 96       # Default: 96 | [70, 127] Hight of the ground level. Higher - lower ground level
+  pix_per_unit: 2         # Default: 2 | [0, 3] Pixels per height unit. 0 - flat, 3 - larger steps
+  ground_thickness: 2     # Default: 2 | [1, 10] Thickness of the ground band in pixels
+  run_width: 25           # Default: 20 | [1, 60] Widths of the stair in pixels
+  p_change: 0.7           # Default: 0.7 | [0, 1] Probability of height change. 0 -never change, 1 -always change
+  p_up_given_change: 0.5  # Default: 0.5 | [0, 1] Probability of height increase given height change. 0 -always decrease, 1 -always increase
+  min_step_height: 5      # Default: 5 | [1, 17] Minimum height of the step in pixels
+  max_step_height: 17     # Default: 10 | [1, 17] Maximum height of the step in pixels
+
+  # Colors for platforms (randomly selected per episode)
+  # Available colors: 
+    # "black", "white", "red", "orange", "yellow", "green", "cyan", "blue", 
+    # "purple", "pink", "brown", "gray", "lime", "teal", "indigo", "magenta"
+  layout_colors: ["cyan"] # Default: ["cyan"] | List of color names from COLOR_PALETTE
+
+
+# ------------------------------------------------------------------------------
+# 9. Physics Settings
+# ------------------------------------------------------------------------------
+physics:
+  gravity: 0.75         # Default: 0.75 | [0.1, 1.0] Gravity force
+  move_speed: 1         # Default: 1 | int and > 1 | Move speed 
+  jump_force: -7.5      # Default: -7.5 | [-10.0, 0.0] Jump force. Negative is upwards
+  ground_friction: 0.8  # Default: 0.8 | [0.1, 1.0] Friction force
+  air_resistance: 0.95  # Default: 0.95 | [0.1, 1.0] Air resistance force
+  max_fall_speed: 8.0   # Default: 8.0 | [0.1, 10.0] Maximum fall speed
